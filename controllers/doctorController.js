@@ -54,3 +54,4 @@ exports.getAllDoctors = async (req, res) => {
     }
 
 }
+

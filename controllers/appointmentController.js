@@ -68,3 +68,66 @@ exports.getAllAppointments = async (req, res) => {
     }
 
 }
+
+//update appointment
+
+exports.updateAppointment=async(req,res)=>{
+
+    console.log('inside update appointment ');
+
+    const userEmail =req.payload
+
+    console.log(userEmail);
+    
+
+    const{appointmentDate}=req.body
+
+    const{id}=req.params
+
+    try{
+
+        const updateAppointment =await appointments.findByIdAndUpdate({_id:id},{appointmentDate},{new:true})
+
+        res.status(200).json({message:'appointment rescheduelled succesfully',updateAppointment})
+
+    }
+    catch(err){
+
+        res.status(500).json({message:"Server Error",err})
+    }
+    
+
+
+}
+
+//delete appointment
+
+exports.deleteAppointment=async(req,res)=>{
+
+    console.log('inside delete appointment ');
+
+    const userEmail =req.payload
+
+    console.log(userEmail);
+
+    const{id}=req.params
+
+    try{
+
+        const deleteAppointment =await appointments.findOneAndDelete({_id:id,userEmail:userEmail})
+
+        if(!deleteAppointment){
+
+            res.status(401).json({message:"appointment not found"})
+        }
+
+        res.status(200).json({message:'appointment cancelled....',deleteAppointment})
+
+    }
+    catch(err){
+
+        res.status(500).json({message:"Server Error",err})
+    }
+}
+
+

@@ -24,7 +24,7 @@ exports.addAppointment = async (req, res) => {
     }
     else {
 
-        const newAppointment = appointments({ doctorID, patientName, appointmentDate, notes,userEmail })
+        const newAppointment =new appointments({ doctorID, patientName, appointmentDate, notes,userEmail })
 
         await newAppointment.save()
         res.status(200).json({ message: "New appointment booked succesfully ", newAppointment })

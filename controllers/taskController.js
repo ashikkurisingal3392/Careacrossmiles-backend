@@ -250,3 +250,37 @@ exports.getCompletedTasks =async(req,res)=>{
     
     
 }
+
+//Delete : user task remove
+
+exports.deleteTask =async(req,res)=>{
+
+    console.log("inside task delete");
+
+    const userEmail=req.payload
+
+    const{id}=req.params
+   console.log(userEmail);
+   
+
+    try{
+
+        const deletedTask =await tasks.findOneAndDelete({_id:id,userEmail})
+        console.log(deletedTask);
+        
+        if(!deletedTask){
+            res.status(404).json({message:"Task not found"})
+        }
+
+         res.status(200).json({message:'Task deleted successfully ',deletedTask})
+
+
+
+    }
+    catch(err){
+                res.status(500).json({message:'Server Error',err})
+
+    }
+
+
+}

@@ -46,6 +46,9 @@ taskRoute.put('/api/completetask/:id',jwtMiddleware,multerMiddleware.array('proo
 //GET: helper completed task list
 taskRoute.get('/api/mytaskscompleted',jwtMiddleware,taskController.getCompletedTasks)
 
+//delete tasks in user
+
+taskRoute.delete('/api/deletetask/:id',jwtMiddleware,taskController.deleteTask)
 
 
 

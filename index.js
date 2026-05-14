@@ -26,7 +26,7 @@ careServer.use(appointmentRoute)
 
 careServer.use('/Uploads',express.static('./Uploads'))
 
-const PORT='3000' | process.env.PORT
+const PORT='3000' || process.env.PORT
 
 careServer.get('/',(req,res)=>{
 

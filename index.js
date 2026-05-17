@@ -12,6 +12,8 @@ const userRoute=require('./router/userRouter')
 const taskRoute =require('./router/TaskRoute')
 const doctorRoute=require('./router/DoctorRoute')
 const appointmentRoute=require('./router/appointmentRoute')
+const pharmacyRoute=require('./router/pharmacyRoute')
+
 
 
 const careServer =express()
@@ -23,6 +25,8 @@ careServer.use(userRoute)
 careServer.use(taskRoute)
 careServer.use(doctorRoute)
 careServer.use(appointmentRoute)
+careServer.use(pharmacyRoute)
+
 
 careServer.use('/Uploads',express.static('./Uploads'))
 

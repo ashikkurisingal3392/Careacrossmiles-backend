@@ -12,7 +12,9 @@ exports.addDoctor = async (req, res) => {
     const userEmail = req.payload
 
     console.log(fullName, specialization, hospitalName, location, fee,userEmail);
-     
+    try{
+
+
       //res.send('request recieved')
    const existingDoctor =await doctors.findOne({fullName,userEmail})
 
@@ -29,6 +31,14 @@ exports.addDoctor = async (req, res) => {
         res.status(200).json({ message: "New Doctor added succesfully ", newDoctor })
 
     }
+
+    }
+    catch(err){
+
+         res.status(500).json({ message: 'Server Error', err })
+
+    }
+     
 
 }
 

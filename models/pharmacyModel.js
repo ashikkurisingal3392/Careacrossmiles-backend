@@ -2,7 +2,7 @@ const mongoose =require('mongoose')
 
 const pharmacySchema =new  mongoose.Schema({
    
-  pharamcyName:{
+  pharmacyName:{
     type:String,
     required:true
   },

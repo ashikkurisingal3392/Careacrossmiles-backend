@@ -4,17 +4,23 @@ const pharmacy =require("../models/pharmacyModel")
 exports.addPharmacy=async(req,res)=>{
 
     console.log('insdie add pharamcy');
+
+
+    console.log("Content-Type:", req.headers["content-type"]);
+   console.log("Authorization:", req.headers.authorization);
   
 
-    const{pharamcyName,address}=req.body
+    const{pharmacyName,address}=req.body
 
     const userEmail =req.payload
 
     console.log(userEmail);
+
+ 
     
    try{
 
-     const existingPharmacy = await pharmacy.findOne({pharamcyName,userEmail})
+     const existingPharmacy = await pharmacy.findOne({pharmacyName,userEmail})
 
      console.log(existingPharmacy);
      
@@ -25,7 +31,7 @@ exports.addPharmacy=async(req,res)=>{
    }
    else{
 
-     const newPharmacy = new pharmacy({pharamcyName,address,userEmail}) 
+     const newPharmacy = new pharmacy({pharmacyName,address,userEmail}) 
 
      await newPharmacy.save()
       res.status(200).json({ message: "New pharmacy added succesfully ",newPharmacy })
@@ -45,7 +51,6 @@ exports.addPharmacy=async(req,res)=>{
 exports.getPharamacy=async(req,res)=>{
 
     console.log('insdie get pharamcy list');
-
 
     const userEmail =req.payload
 

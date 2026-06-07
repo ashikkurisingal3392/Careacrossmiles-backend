@@ -65,3 +65,47 @@ exports.getAllDoctors = async (req, res) => {
 
 }
 
+//delete doctor
+exports.deleteDoctor=async(req,res)=>{
+
+    console.log('insdie delete a doctor');
+
+
+    const userEmail =req.payload
+
+    const {id}=req.params
+
+    console.log(userEmail);
+    console.log(id);
+    
+    
+   try{
+
+    const existingDoctor = await doctors.findById(id)
+
+    console.log(existingDoctor);
+    
+
+    if(!existingDoctor){
+
+        res.status(401).json({message:"Doctor is not existing.."})
+    }
+    else{
+
+         const deleteDoctor = await doctors.findOneAndDelete({_id:id},{userEmail}) 
+
+        res.status(200).json({ message: "Doctor deleted succesfully ",deleteDoctor })
+
+    }
+
+    
+   
+
+   }
+   catch(err){
+
+       res.status(500).json({ message: 'Server Error'+ err })
+   }
+    
+
+}

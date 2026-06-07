@@ -14,7 +14,9 @@ function fileFilter (req, file, cb) {
   // The function should call `cb` with a boolean
   // to indicate if the file should be accepted
 
-  if(file.mimetype == 'image/png' ||file.mimetype == 'image/jpg'||file.mimetype == 'image/jpeg'){
+  if(file.mimetype == 'image/png' ||file.mimetype == 'image/jpg'||file.mimetype == 'image/jpeg')
+    
+    {
      
     cb(null, true) // To accept the file pass `true`, like so:
   }

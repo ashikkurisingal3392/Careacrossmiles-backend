@@ -13,5 +13,7 @@ doctorRoute.get('/api/getdoctors',jwtMiddleware,doctorController.getAllDoctors)
 
 doctorRoute.post('/api/adddoctor',jwtMiddleware,doctorController.addDoctor)
 
+doctorRoute.delete('/api/doctor/:id',jwtMiddleware,doctorController.deleteDoctor)
+
 
 module.exports=doctorRoute

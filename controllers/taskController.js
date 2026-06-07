@@ -11,7 +11,12 @@ exports.addTasks = async (req, res) => {
     console.log("payload:", req.payload)
     const userEmail = req.payload
     const uploadedImages = []
-    req.files.map(item => uploadedImages.push(item.filename))
+    if(req.files && req.files.length>0){
+
+        req.files.foreach(item => uploadedImages.push(item.filename))
+
+    }
+    
     console.log(title, payment, location, helper, carerecipient, date, description, category,family, userEmail, uploadedImages,budget);
      
     try{

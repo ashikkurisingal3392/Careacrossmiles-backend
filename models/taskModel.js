@@ -65,7 +65,7 @@ const taskSchema = new mongoose.Schema({
   },
   proof:{
       type:Array,
-      required:true
+      default:[]
 
   },
   completeNote:{

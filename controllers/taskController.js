@@ -12,9 +12,12 @@ exports.addTasks = async (req, res) => {
     const userEmail = req.payload
     const uploadedImages = []
     req.files.map(item => uploadedImages.push(item.filename))
-    console.log(title, payment, location, helper, carerecipient, date, description, category,family, userEmail, uploadedImages);
+    console.log(title, payment, location, helper, carerecipient, date, description, category,family, userEmail, uploadedImages,budget);
      
-      //res.send('request recieved')
+    try{
+
+
+           //res.send('request recieved')
    const existingTask =await tasks.findOne({title,userEmail,date})
 
 
@@ -34,6 +37,16 @@ exports.addTasks = async (req, res) => {
         res.status(200).json({ message: "Task added succesfully ", newTask })
 
     }
+
+
+    }
+    catch(err){
+
+           res.status(500).json({ message: "Server Error ", err })
+
+
+    }
+   
 
 }
 

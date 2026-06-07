@@ -7,296 +7,294 @@ exports.addTasks = async (req, res) => {
 
     console.log('inside add task');
     console.log(req.body);
-    const { title, payment, location, helper, carerecipient, date, description, category,family,budget } = req.body
+    const { title, payment, location, helper, carerecipient, date, description, category, family, budget } = req.body
     console.log("payload:", req.payload)
     const userEmail = req.payload
     const uploadedImages = []
-    if(req.files && req.files.length>0){
-
-        req.files.foreach(item => uploadedImages.push(item.filename))
-
-    }
-    
-    console.log(title, payment, location, helper, carerecipient, date, description, category,family, userEmail, uploadedImages,budget);
-     
-    try{
-
-
-           //res.send('request recieved')
-   const existingTask =await tasks.findOne({title,userEmail,date})
+    req.files.map(item => uploadedImages.push(item.filename))
 
 
 
-    if (existingTask) {
+    console.log(title, payment, location, helper, carerecipient, date, description, category, family, userEmail, uploadedImages, budget);
 
-        res.status(401).json({ message: "Task alerady existing.." })
-    }
-    else {
+    try {
 
-        const newTask = tasks({
-            title, payment, location, helper, carerecipient, date, description, category,family, userEmail, uploadedImages,budget
 
-        })
+        //res.send('request recieved')
+        const existingTask = await tasks.findOne({ title, userEmail, date })
 
-        await newTask.save()
-        res.status(200).json({ message: "Task added succesfully ", newTask })
 
-    }
+
+        if (existingTask) {
+
+            res.status(401).json({ message: "Task alerady existing.." })
+        }
+        else {
+
+            const newTask = tasks({
+                title, payment, location, helper, carerecipient, date, description, category, family, userEmail, uploadedImages, budget
+
+            })
+
+            await newTask.save()
+            res.status(200).json({ message: "Task added succesfully ", newTask })
+
+        }
 
 
     }
-    catch(err){
+    catch (err) {
 
-           res.status(500).json({ message: "Server Error ", err })
+        res.status(500).json({ message: "Server Error ", err })
 
 
     }
-   
+
 
 }
 
 //GET : all tasks
 
-exports.getAllTasks =async(req,res)=>{
+exports.getAllTasks = async (req, res) => {
 
     console.log("inside get all tasks");
 
-    const userEmail =req.payload
+    const userEmail = req.payload
     console.log(userEmail);
 
-   // res.send('request send')
-    try{
+    // res.send('request send')
+    try {
 
-         const allTasks = await tasks.find({userEmail})
+        const allTasks = await tasks.find({ userEmail })
         res.status(200).json({ message: "All Tasks fetched.", allTasks })
 
 
     }
-    catch(err){
+    catch (err) {
 
-        res.status(500).json({message:'Server Error',err})
+        res.status(500).json({ message: 'Server Error', err })
     }
 
-   
-    
-    
+
+
+
 }
 
 //GET : all tasks for helpers dashboard
 
-exports.getAllTasksHelpers =async(req,res)=>{
+exports.getAllTasksHelpers = async (req, res) => {
 
     console.log("inside get all tasks");
 
-    const userEmail =req.payload
+    const userEmail = req.payload
     console.log(userEmail);
 
-   // res.send('request send')
-    try{
+    // res.send('request send')
+    try {
 
-         const allTasks = await tasks.find()
+        const allTasks = await tasks.find()
         res.status(200).json({ message: "All Tasks for helper dashboard fetched.", allTasks })
 
 
     }
-    catch(err){
+    catch (err) {
 
-        res.status(500).json({message:'Server Error',err})
+        res.status(500).json({ message: 'Server Error', err })
     }
 
-   
-    
-    
+
+
+
 }
 
 //PUT: accept a task by helper
 
-exports.acceptTask =async(req,res)=>{
+exports.acceptTask = async (req, res) => {
 
     console.log('inside accept task');
 
-    const{id}=req.params
-    const helperEmail=req.payload
+    const { id } = req.params
+    const helperEmail = req.payload
 
     console.log(id);
-     console.log(helperEmail);
+    console.log(helperEmail);
 
-     try{
-        const task =await tasks.findOneAndUpdate({_id:id,status:'open'},
-        {
-            status:'inprogress',
-            helperEmail:helperEmail
-        },{new:true})
+    try {
+        const task = await tasks.findOneAndUpdate({ _id: id, status: 'open' },
+            {
+                status: 'inprogress',
+                helperEmail: helperEmail
+            }, { new: true })
 
-        if(!task){
+        if (!task) {
 
-            res.status(404).json({message:'Task already accepted'})
+            res.status(404).json({ message: 'Task already accepted' })
         }
-          res.status(200).json({ message: "A Task updated.", task })
+        res.status(200).json({ message: "A Task updated.", task })
 
-     }
-     catch(err){
+    }
+    catch (err) {
 
-          res.status(500).json({ message: "Server Error", err })
-     }
+        res.status(500).json({ message: "Server Error", err })
+    }
 
 }
 
 //GET: helper individual  accepted tasks
-exports.getHelperTasks =async(req,res)=>{
+exports.getHelperTasks = async (req, res) => {
 
     console.log("inside get all helper tasks");
 
-    const userEmail =req.payload
+    const userEmail = req.payload
     console.log(userEmail);
 
-   // res.send('request send')
-    try{
+    // res.send('request send')
+    try {
 
-         const allTasks = await tasks.find({helperEmail:userEmail,status:'inprogress'})
-         res.status(200).json({ message: "All Tasks accepted by helper fetched.", allTasks })
+        const allTasks = await tasks.find({ helperEmail: userEmail, status: 'inprogress' })
+        res.status(200).json({ message: "All Tasks accepted by helper fetched.", allTasks })
 
 
     }
-    catch(err){
+    catch (err) {
 
-        res.status(500).json({message:'Server Error',err})
+        res.status(500).json({ message: 'Server Error', err })
     }
 
-   
-    
-    
+
+
+
 }
 
 //PUT: release a task by helper
 
-exports.releasetask =async(req,res)=>{
+exports.releasetask = async (req, res) => {
 
     console.log('inside release task');
 
-    const{id}=req.params
-    const helperEmail=req.payload
+    const { id } = req.params
+    const helperEmail = req.payload
 
     console.log(id);
-     console.log(helperEmail);
+    console.log(helperEmail);
 
-     try{
-        const task =await tasks.findOneAndUpdate({_id:id,status:'inprogress'},
-        {
-            status:'open',
-        },{new:true})
+    try {
+        const task = await tasks.findOneAndUpdate({ _id: id, status: 'inprogress' },
+            {
+                status: 'open',
+            }, { new: true })
 
-        if(!task){
+        if (!task) {
 
-            res.status(404).json({message:'Task already released'})
+            res.status(404).json({ message: 'Task already released' })
         }
-          res.status(200).json({ message: "A Task released ...", task })
+        res.status(200).json({ message: "A Task released ...", task })
 
-     }
-     catch(err){
+    }
+    catch (err) {
 
-          res.status(500).json({ message: "Server Error", err })
-     }
+        res.status(500).json({ message: "Server Error", err })
+    }
 
 }
 
 // PUT: complete task 
 
-exports.completeTask =async(req,res)=>{
+exports.completeTask = async (req, res) => {
 
     console.log('inside complete task');
 
-    const{id}=req.params
-    const helperEmail=req.payload
+    const { id } = req.params
+    const helperEmail = req.payload
 
     console.log(id);
-     console.log(helperEmail);
+    console.log(helperEmail);
 
-     const{completeNote}=req.body
+    const { completeNote } = req.body
 
 
-     const uploadProof=[]
-    
-     req.files.map(item=>uploadProof.push(item.filename))
+    const uploadProof = []
 
-     try{
-        const task =await tasks.findOneAndUpdate({_id:id,status:'inprogress'},
-        {
-            status:'completed',
-            proof:uploadProof,
-            helperEmail:helperEmail,
-            completeNote:completeNote
+    req.files.map(item => uploadProof.push(item.filename))
 
-        },{new:true})
+    try {
+        const task = await tasks.findOneAndUpdate({ _id: id, status: 'inprogress' },
+            {
+                status: 'completed',
+                proof: uploadProof,
+                helperEmail: helperEmail,
+                completeNote: completeNote
 
-        if(!task){
+            }, { new: true })
 
-            res.status(404).json({message:'Task already completed'})
+        if (!task) {
+
+            res.status(404).json({ message: 'Task already completed' })
         }
-          res.status(200).json({ message: "A Task completed.", task })
+        res.status(200).json({ message: "A Task completed.", task })
 
-     }
-     catch(err){
+    }
+    catch (err) {
 
-          res.status(500).json({ message: "Server Error", err })
-     }
+        res.status(500).json({ message: "Server Error", err })
+    }
 
 }
 
 //GET: helper Completed  tasks
-exports.getCompletedTasks =async(req,res)=>{
+exports.getCompletedTasks = async (req, res) => {
 
     console.log("inside get all helper tasks");
 
-    const userEmail =req.payload
+    const userEmail = req.payload
     console.log(userEmail);
 
-   // res.send('request send')
-    try{
+    // res.send('request send')
+    try {
 
-         const allTasks = await tasks.find({helperEmail:userEmail,status:'completed'})
-         res.status(200).json({ message: "All Tasks Completed by helper fetched.", allTasks })
+        const allTasks = await tasks.find({ helperEmail: userEmail, status: 'completed' })
+        res.status(200).json({ message: "All Tasks Completed by helper fetched.", allTasks })
 
 
     }
-    catch(err){
+    catch (err) {
 
-        res.status(500).json({message:'Server Error',err})
+        res.status(500).json({ message: 'Server Error', err })
     }
 
-   
-    
-    
+
+
+
 }
 
 //Delete : user task remove
 
-exports.deleteTask =async(req,res)=>{
+exports.deleteTask = async (req, res) => {
 
     console.log("inside task delete");
 
-    const userEmail=req.payload
+    const userEmail = req.payload
 
-    const{id}=req.params
-   console.log(userEmail);
-   
+    const { id } = req.params
+    console.log(userEmail);
 
-    try{
 
-        const deletedTask =await tasks.findOneAndDelete({_id:id,userEmail})
+    try {
+
+        const deletedTask = await tasks.findOneAndDelete({ _id: id, userEmail })
         console.log(deletedTask);
-        
-        if(!deletedTask){
-            res.status(404).json({message:"Task not found"})
+
+        if (!deletedTask) {
+            res.status(404).json({ message: "Task not found" })
         }
 
-         res.status(200).json({message:'Task deleted successfully ',deletedTask})
+        res.status(200).json({ message: 'Task deleted successfully ', deletedTask })
 
 
 
     }
-    catch(err){
-                res.status(500).json({message:'Server Error',err})
+    catch (err) {
+        res.status(500).json({ message: 'Server Error', err })
 
     }
 

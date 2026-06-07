@@ -87,7 +87,6 @@ exports.deletePharamacy=async(req,res)=>{
     console.log(userEmail);
     console.log(id);
     
-    
    try{
 
     const existingPharmacy = await pharmacy.findById(id)
@@ -107,8 +106,6 @@ exports.deletePharamacy=async(req,res)=>{
 
     }
 
-    
-   
 
    }
    catch(err){

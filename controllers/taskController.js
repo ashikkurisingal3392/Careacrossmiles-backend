@@ -13,8 +13,6 @@ exports.addTasks = async (req, res) => {
     const uploadedImages = []
     req.files.map(item => uploadedImages.push(item.filename))
 
-
-
     console.log(title, payment, location, helper, carerecipient, date, description, category, family, userEmail, uploadedImages, budget);
 
     try {

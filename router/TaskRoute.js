@@ -54,6 +54,8 @@ taskRoute.delete('/api/deletetask/:id',jwtMiddleware,taskController.deleteTask)
 
 taskRoute.put('/api/makepayment/:id',jwtMiddleware,taskController.makePayment)
 
+// taskRoute.post('/api/stripe/webhook',taskController.stripeWebhook)
+
 
 
 module.exports =taskRoute

@@ -392,15 +392,15 @@ exports.makePayment = async (req, res) => {
         const taskDetails = req.body;
 
         // Update task
-        const updateTask = await tasks.findByIdAndUpdate(
-            id,
-            { $set: { paymentStatus: true } },
-            { new: true }
-        );
+        // const updateTask = await tasks.findByIdAndUpdate(
+        //     id,
+        //     { $set: { paymentStatus: true } },
+        //     { new: true }
+        // );
 
-        if (!updateTask) {
-            return res.status(404).json({ message: "Task not found" });
-        }
+        // if (!updateTask) {
+        //     return res.status(404).json({ message: "Task not found" });
+        // }
 
         // Create Stripe session
         const session = await Stripe.checkout.sessions.create({
@@ -423,7 +423,10 @@ exports.makePayment = async (req, res) => {
                     quantity: 1
                 }
             ],
-            mode: 'payment'
+            mode: 'payment',
+            metadata:{
+                taskId:id
+            }
         });
 
         // Return Stripe URL
@@ -434,3 +437,38 @@ exports.makePayment = async (req, res) => {
         res.status(500).json({ message: 'Server Error', err });
     }
 };
+
+exports.stripeWebhook=async(req,res)=>{
+
+     const sig = req.headers["stripe-signature"];
+
+        let event;
+
+        try {
+            event = Stripe.webhooks.constructEvent(
+                req.body,
+                sig,
+                process.env.STRIPE_WEBHOOK_SECRET
+            );
+        } catch (err) {
+            console.log("Webhook signature error:", err.message);
+            return res.status(400).send(`Webhook Error: ${err.message}`);
+        }
+
+        // Payment success event
+        if (event.type === "checkout.session.completed") {
+            const session = event.data.object;
+            const taskId = session.metadata.taskId;
+
+            tasks.findByIdAndUpdate(
+                taskId,
+                { paymentStatus: true },
+                { new: true }
+            )
+                .then(() => console.log("Payment updated in DB"))
+                .catch(err => console.log(err));
+        }
+
+        res.json({ received: true });
+    
+}

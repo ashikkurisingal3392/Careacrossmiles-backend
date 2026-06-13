@@ -14,12 +14,21 @@ const doctorRoute=require('./router/DoctorRoute')
 const appointmentRoute=require('./router/appointmentRoute')
 const pharmacyRoute=require('./router/pharmacyRoute')
 
+//controller for only webhook
 
+const taskController=require('./controllers/taskController')
 
 const careServer =express()
 
 //connect backend and frontend
 careServer.use(cors())
+//stripe webhook: manually mouted before express.json
+
+careServer.post('/api/stripe/webhook',express.raw({type:'application/json'}),
+
+taskController.stripeWebhook
+)
+
 careServer.use(express.json()) //parse json to js
 careServer.use(userRoute)
 careServer.use(taskRoute)

@@ -3,6 +3,9 @@ const tasks = require('../models/taskModel')
 const Stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 
+
+
+
 //add Task :POST 
 
 exports.addTasks = async (req, res) => {
@@ -303,59 +306,131 @@ exports.deleteTask = async (req, res) => {
 
 //Update : user payment to helper
 
-exports.makePayment = async (req, res) => {
+// exports.makePayment = async (req, res) => {
 
-    console.log("inside task delete");
+//     console.log("inside make payment");
 
-    const userEmail = req.payload
+//     const userEmail = req.payload
 
-    const { id } = req.params
-    console.log(userEmail);
+//     const { id } = req.params
+//     console.log(userEmail);
 
-    const { taskDetails } = req.body
+//     console.log(id);
+    
 
+//     const  taskDetails  = req.body
 
-    try {
-
-        const updateTask = await tasks.findByIdAndUpdate({ _id: id, userEmail },
-            {
-                paymentStatus: true
-
-            }, { new: true })
+//     console.log(taskDetails);
+    
 
 
-        const session = await Stripe.checkout.sessions.create({
-            payment_method_types:["card"],
-            success_url: '',
-            cancel_url:"",
+//     try {
+
+//         const updateTask = await tasks.findByIdAndUpdate(id,
+//             {
+//                 $set:{paymentStatus: true},
+//              } 
+//             , { new: true })
+
+
+//              if (!updateTask) {
+//             res.status(404).json({ message: "Task not found" })
+//         }
+
+
+//         const session = await Stripe.checkout.sessions.create({
+//             payment_method_types:["card"],
+//             success_url:'http://localhost:5173/paymentsuccess',
+//             cancel_url:"http://localhost:5173/paymenterror",
             
-            line_items: [
-                {
-                    price: '{{PRICE_ID}}',
-                    quantity: 2,
-                },
-            ],
-            mode: 'payment',
-        });
+//             line_items: [
+//                 {
+//                     price_data:{
+//                         currency:'usd',
+//                         product_data:{
+//                             name:taskDetails.title,
+//                             metadata:{
+//                                 title:taskDetails.title,
+//                                 date:taskDetails.date
+//                             },
+//                         },
+//                         unit_amount:Math.round(Number(taskDetails.payment)*100)
+//                     },
+//                     quantity: 1,
+//                 },
+//             ],
+//             mode: 'payment',
+//         });
+
+//          // Return Stripe URL
+//         res.status(200).json({ url: session.url });
 
 
-        console.log(updateTask);
-        console.log(session);
+//         console.log(updateTask);
+//         console.log(session);
         
 
+       
+
+//         res.status(200).json({ message: 'Task Updated successfully ', updateTask })
+
+
+
+//     }
+//     catch (err) {
+//         res.status(500).json({ message: 'Server Error', err })
+
+//     }
+
+
+// }
+
+exports.makePayment = async (req, res) => {
+    try {
+        const userEmail = req.payload;
+        const { id } = req.params;
+        const taskDetails = req.body;
+
+        // Update task
+        const updateTask = await tasks.findByIdAndUpdate(
+            id,
+            { $set: { paymentStatus: true } },
+            { new: true }
+        );
+
         if (!updateTask) {
-            res.status(404).json({ message: "Task not found" })
+            return res.status(404).json({ message: "Task not found" });
         }
 
-        res.status(200).json({ message: 'Task Updated successfully ', updateTask })
+        // Create Stripe session
+        const session = await Stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            success_url: 'https://careacrossmiles-frontend.vercel.app/paymentsuccess',
+            cancel_url: 'https://careacrossmiles-frontend.vercel.app/paymenterror',
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'usd',
+                        product_data: {
+                            name: taskDetails.title,
+                            metadata: {
+                                title: taskDetails.title,
+                                date: taskDetails.date
+                            }
+                        },
+                        unit_amount: Math.round(Number(taskDetails.payment) * 100)
+                    },
+                    quantity: 1
+                }
+            ],
+            mode: 'payment'
+        });
 
+        // Return Stripe URL
+        res.status(200).json({ url: session.url });
 
-
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: 'Server Error', err });
     }
-    catch (err) {
-        res.status(500).json({ message: 'Server Error', err })
-
-    }
-
-
-}
+};

@@ -1,5 +1,7 @@
 const tasks = require('../models/taskModel')
 
+const Stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
 
 //add Task :POST 
 
@@ -310,17 +312,42 @@ exports.makePayment = async (req, res) => {
     const { id } = req.params
     console.log(userEmail);
 
+    const { taskDetails } = req.body
+
 
     try {
 
-        const deletedTask = await tasks.findOneAndDelete({ _id: id, userEmail })
-        console.log(deletedTask);
+        const updateTask = await tasks.findByIdAndUpdate({ _id: id, userEmail },
+            {
+                paymentStatus: true
 
-        if (!deletedTask) {
+            }, { new: true })
+
+
+        const session = await Stripe.checkout.sessions.create({
+            payment_method_types:["card"],
+            success_url: '',
+            cancel_url:"",
+            
+            line_items: [
+                {
+                    price: '{{PRICE_ID}}',
+                    quantity: 2,
+                },
+            ],
+            mode: 'payment',
+        });
+
+
+        console.log(updateTask);
+        console.log(session);
+        
+
+        if (!updateTask) {
             res.status(404).json({ message: "Task not found" })
         }
 
-        res.status(200).json({ message: 'Task deleted successfully ', deletedTask })
+        res.status(200).json({ message: 'Task Updated successfully ', updateTask })
 
 
 

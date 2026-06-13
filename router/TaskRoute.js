@@ -50,7 +50,9 @@ taskRoute.get('/api/mytaskscompleted',jwtMiddleware,taskController.getCompletedT
 
 taskRoute.delete('/api/deletetask/:id',jwtMiddleware,taskController.deleteTask)
 
+//make payment by user
 
+taskRoute.put('/api/makepayment/:id',jwtMiddleware,taskController.makePayment)
 
 
 

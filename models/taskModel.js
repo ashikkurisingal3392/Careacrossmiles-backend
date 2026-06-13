@@ -73,7 +73,7 @@ const taskSchema = new mongoose.Schema({
         default:""
 
   },
-  paymetStatus:{
+  paymentStatus:{
     type:Boolean,
     default:false
   }

@@ -72,6 +72,10 @@ const taskSchema = new mongoose.Schema({
      type:String,
         default:""
 
+  },
+  paymetStatus:{
+    type:Boolean,
+    default:false
   }
    
 });

@@ -61,6 +61,18 @@ exports.loginUser = async (req, res) => {
             const passwordMatch = await bcrypt.compare(password,existingUser.password)
             console.log(passwordMatch);
             
+            const userData ={
+               userId: existingUser._id,
+               username:existingUser.username,
+                phone: existingUser.phone,
+               email:existingUser.email,
+                family: existingUser.family,
+               phone:existingUser.phone,
+                 profile: existingUser.family,
+                 bio: existingUser.bio,
+               role:existingUser.role,
+
+            }
 
 
             if (passwordMatch) {
@@ -69,7 +81,7 @@ exports.loginUser = async (req, res) => {
                 console.log(token);
 
 
-                res.status(200).json({ message: 'Login successful', existingUser, token })
+                res.status(200).json({ message: 'Login successful', existingUser:userData, token })
             }
             else {
                 res.status(401).json({ message: "passwords are not match" })

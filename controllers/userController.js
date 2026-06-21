@@ -71,6 +71,16 @@ exports.loginUser = async (req, res) => {
                  profile: existingUser.family,
                  bio: existingUser.bio,
                role:existingUser.role,
+               helperDetails:{
+                skills:existingUser.helperDetails?.skills,
+                availability:existingUser.helperDetails?.availability,
+                experience:existingUser.helperDetails?.experience,
+                status:existingUser.helperDetails?.status,
+                transport:existingUser.helperDetails?.transport,
+                district:existingUser.helperDetails?.district,
+                travelRadius:existingUser.helperDetails?.travelRadius,
+                language:existingUser.helperDetails?.language,
+               }
 
             }
 

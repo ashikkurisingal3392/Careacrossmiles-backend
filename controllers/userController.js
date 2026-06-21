@@ -57,8 +57,13 @@ exports.loginUser = async (req, res) => {
         const existingUser = await user.findOne({ email })
 
         if (existingUser) {
+           
+            const passwordMatch = await bcrypt.compare(password,existingUser.password)
+            console.log(passwordMatch);
+            
 
-            if (existingUser.password === password) {
+
+            if (passwordMatch) {
 
                 const token = jwt.sign({ useremail: existingUser.email, userid: existingUser._id }, process.env.jwtKey)
                 console.log(token);

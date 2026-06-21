@@ -2,12 +2,16 @@ const user = require('../models/userSchema')
 
 const jwt = require('jsonwebtoken')
 
+const bcrypt =require('bcrypt')
+
 //implement register logic
 
 exports.registerUser = async (req, res) => {
 
     console.log("inside register function", req.body);
     const { username, email, password, phone, family, role, helperDetails } = req.body
+
+    const hashPassword =await bcrypt.hash(password,10)
 
     try {
         //user-collection
@@ -20,7 +24,7 @@ exports.registerUser = async (req, res) => {
         }
         else {
 
-            const newUser = new user({ username, email, password, phone, family, role: role || "user", helperDetails: helperDetails || {} })
+            const newUser = new user({ username, email,password: hashPassword, phone, family, role: role || "user", helperDetails: helperDetails || {} })
             await newUser.save()
 
 

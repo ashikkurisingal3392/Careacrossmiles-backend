@@ -30,4 +30,8 @@ userRouter.get('/api/gethelpers',jwtMiddleware,userController.getAllHelpers)
 
 userRouter.put('/api/updateHelper/:id',jwtMiddleware,multerMiddleware.single('profile'),userController.updateHelperProfile)
 
+//user: invite members
+userRouter.post('/api/sendemail',jwtMiddleware,userController.sendEmailNotification)
+
+
 module.exports=userRouter;

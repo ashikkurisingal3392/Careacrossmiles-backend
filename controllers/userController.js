@@ -237,8 +237,17 @@ exports.updateHelperProfile = async (req, res) => {
 //send email invitation
 exports.sendEmailNotification = async (req, res) => {
 
+    console.log("inside sendemail ");
 
-    const toEmail = req.body
+    console.log(req.body);
+    
+    
+
+
+    const {email} = req.body
+
+    console.log(email);
+    
 
     try {
 
@@ -253,7 +262,7 @@ exports.sendEmailNotification = async (req, res) => {
         const mailOptions = {
 
             from: 'watchmerise030392@gmail.com',
-            to: toEmail,
+            to: email,
             subject: 'Family Invitation',
             html: `<h2>You've been invited!</h2>
                 <p>You have been invited to join the antony family group on Care Across Miles.</p>

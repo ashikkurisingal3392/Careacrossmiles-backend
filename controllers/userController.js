@@ -252,10 +252,9 @@ exports.sendEmailNotification = async (req, res) => {
     try {
 
         const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
+            host: "142.250.102.109",
             port: 465,
             secure: true,
-            family: 4,
             auth: {
                 user: 'watchmerise030392@gmail.com',
                 pass: process.env.GMAIL_PASSWORD

@@ -325,7 +325,7 @@ exports.sendEmailNotification = async (req, res) => {
 
         const response = await resend.emails.send({
             from: 'onboarding@resend.dev',
-            to: 'ashikkurisingal@gmail.com',
+            to: email,
             subject: 'Family Invitation ',
             html: `
 <h2>You've been invited!</h2>
@@ -333,7 +333,7 @@ exports.sendEmailNotification = async (req, res) => {
 <p>You have been invited to join the Antony family group on Care Across Miles.</p>
 
 <a
- href="https://careacrossmiles.vercel.app/register"
+ href="https://careacrossmiles-frontend.vercel.app/register"
  style="
   background:#2c6e49;
   color:white;

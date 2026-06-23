@@ -4,7 +4,13 @@ const jwt = require('jsonwebtoken')
 
 const bcrypt = require('bcrypt')
 
-const nodemailer = require('nodemailer')
+// const nodemailer = require('nodemailer')
+
+const Resend = require('resend')
+
+const resend = new Resend(process.env.RESEND_API_KEY)
+
+
 
 //implement register logic
 
@@ -234,76 +240,115 @@ exports.updateHelperProfile = async (req, res) => {
     }
 }
 
-//send email invitation
+// //send email invitation using nodemailer Gmail SMTP
+// exports.sendEmailNotification = async (req, res) => {
+
+//     console.log("inside sendemail ");
+
+//     console.log(req.body);
+
+
+
+
+//     const { email } = req.body
+
+//     console.log(email);
+
+
+//     try {
+
+//         const transporter = nodemailer.createTransport({
+//             host: "smtp.gmail.com",
+//             port: 587,
+//             secure: false,
+//             auth: {
+//                 user: 'watchmerise030392@gmail.com',
+//                 pass: process.env.GMAIL_PASSWORD
+//             }, tls: {
+//                 rejectUnauthorized: false,
+//             },
+//         })
+
+//         const mailOptions = {
+
+//             from: 'watchmerise030392@gmail.com',
+//             to: email,
+//             subject: 'Family Invitation',
+//             html: `<h2>You've been invited!</h2>
+//                 <p>You have been invited to join the antony family group on Care Across Miles.</p>
+//                 <p>Please register and log in to view tasks and updates.</p>`,
+//             text: 'dummy email'
+//         }
+
+//         const info = await transporter.sendMail(mailOptions)
+
+
+//         res.status(200).json({
+//             message: "Invitation sent successfully",
+//             accepted: info.accepted,
+//             messageId: info.messageId,
+//         });
+
+
+
+
+//     }
+//     catch (err) {
+
+//         console.log(err);
+//         console.log("EMAIL ERROR MESSAGE:", err.message);
+//         console.log("EMAIL ERROR CODE:", err.code);
+//         console.log("FULL ERROR:", err);
+//         res.status(500).json({
+//             message: "Failed to send invitation", error: err.message, code: err.code
+//         });
+
+
+
+//     }
+
+
+
+
+
+
+// }
+
+//send email using resender
 exports.sendEmailNotification = async (req, res) => {
 
-    console.log("inside sendemail ");
-
-    console.log(req.body);
-
-
-
+    console.log("inside invite email");
 
     const { email } = req.body
 
-    console.log(email);
-
-
     try {
 
-        const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: false,
-            auth: {
-                user: 'watchmerise030392@gmail.com',
-                pass: process.env.GMAIL_PASSWORD
-            }, tls: {
-                rejectUnauthorized: false,
-            },
-        })
+        const response = await resend.emails.send({
+            from: 'onboarding@resend.dev',
+            to: 'ashikkurisingal@gmail.com',
+            subject: 'Family Invitation ',
+            html: '<p>Congrats on sending your <strong>first email</strong>!</p>'
+    })
 
-        const mailOptions = {
-
-            from: 'watchmerise030392@gmail.com',
-            to: email,
-            subject: 'Family Invitation',
-            html: `<h2>You've been invited!</h2>
-                <p>You have been invited to join the antony family group on Care Across Miles.</p>
-                <p>Please register and log in to view tasks and updates.</p>`,
-            text: 'dummy email'
-        }
-
-        const info = await transporter.sendMail(mailOptions)
-
-
-        res.status(200).json({
+      return res.status(200).json({
             message: "Invitation sent successfully",
-            accepted: info.accepted,
-            messageId: info.messageId,
+            response
         });
-
 
 
 
     }
     catch (err) {
 
+
         console.log(err);
-        console.log("EMAIL ERROR MESSAGE:", err.message);
-        console.log("EMAIL ERROR CODE:", err.code);
-        console.log("FULL ERROR:", err);
-        res.status(500).json({
-            message: "Failed to send invitation", error: err.message, code: err.code
+
+        return res.status(500).json({
+            message: "Failed to send invitation",
+            error: err.message
         });
 
 
-
     }
-
-
-
-
-
 
 }

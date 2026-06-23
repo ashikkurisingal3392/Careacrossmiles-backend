@@ -240,14 +240,14 @@ exports.sendEmailNotification = async (req, res) => {
     console.log("inside sendemail ");
 
     console.log(req.body);
-    
-    
 
 
-    const {email} = req.body
+
+
+    const { email } = req.body
 
     console.log(email);
-    
+
 
     try {
 
@@ -255,7 +255,7 @@ exports.sendEmailNotification = async (req, res) => {
             service: 'gmail',
             auth: {
                 user: 'watchmerise030392@gmail.com',
-                pass:process.env.GMAIL_PASSWORD
+                pass: process.env.GMAIL_PASSWORD
             }
         })
 
@@ -282,7 +282,9 @@ exports.sendEmailNotification = async (req, res) => {
     catch (err) {
 
         console.log(err);
-
+        console.log("EMAIL ERROR MESSAGE:", err.message);
+        console.log("EMAIL ERROR CODE:", err.code);
+        console.log("FULL ERROR:", err);
         res.status(500).json({
             message: "Failed to send invitation"
         });

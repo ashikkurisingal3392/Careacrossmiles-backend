@@ -252,7 +252,10 @@ exports.sendEmailNotification = async (req, res) => {
     try {
 
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            family: 4,
             auth: {
                 user: 'watchmerise030392@gmail.com',
                 pass: process.env.GMAIL_PASSWORD
@@ -270,13 +273,15 @@ exports.sendEmailNotification = async (req, res) => {
             text: 'dummy email'
         }
 
-       
+        const info = await transporter.sendMail(mailOptions)
+
 
         res.status(200).json({
-            message: "Invitation sent successfully"
+            message: "Invitation sent successfully",
+            accepted: info.accepted,
+            messageId: info.messageId,
         });
 
-         await transporter.sendMail(mailOptions)
 
 
 
@@ -288,7 +293,7 @@ exports.sendEmailNotification = async (req, res) => {
         console.log("EMAIL ERROR CODE:", err.code);
         console.log("FULL ERROR:", err);
         res.status(500).json({
-            message: "Failed to send invitation"
+            message: "Failed to send invitation", error: err.message, code: err.code
         });
 
 

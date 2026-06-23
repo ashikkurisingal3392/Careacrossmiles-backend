@@ -270,11 +270,13 @@ exports.sendEmailNotification = async (req, res) => {
             text: 'dummy email'
         }
 
-        await transporter.sendMail(mailOptions)
+       
 
         res.status(200).json({
             message: "Invitation sent successfully"
         });
+
+         await transporter.sendMail(mailOptions)
 
 
 

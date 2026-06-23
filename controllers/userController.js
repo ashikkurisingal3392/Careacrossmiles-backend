@@ -5,11 +5,13 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
 // const nodemailer = require('nodemailer')
-
+// resend form email send
 const { Resend } = require('resend')
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+
+const crypto= require('crypto')
 
 
 //implement register logic
@@ -57,19 +59,109 @@ exports.loginUser = async (req, res) => {
 
     const { email, password } = req.body
 
-
+     const otp=(Math.floor(100000+Math.random()*900000))
+     console.log(otp);
+     
 
     try {
 
+        console.log("inside try");
+        
 
         const existingUser = await user.findOne({ email })
+
+        console.log("existingUser:",existingUser);
+        
 
         if (existingUser) {
 
             const passwordMatch = await bcrypt.compare(password, existingUser.password)
             console.log(passwordMatch);
 
-            const userData = {
+
+
+            if (passwordMatch) {
+
+                console.log("inside passwordmatch");
+
+
+            //create hash otp
+            const hashedOtp=crypto.createHash("sha256").update(otp.toString()).digest("hex")
+             console.log(hashedOtp);
+             
+              existingUser.otp=hashedOtp
+              existingUser.otpExpire=Date.now()+5*60*1000
+              await existingUser.save()
+             
+              console.log(existingUser);
+              
+
+               await resend.emails.send({
+                    from:"Care Across Miles <onboarding@resend.dev>",
+                    to:email,
+                    subject:"Your OTP verification code",
+                    html:`
+                    <h2>CareAcrossMiles OTP Verification</h2>
+                    <p>Your OTP code :</p>
+                    <p>${otp}</p>
+                     <p>This code will expire in 5 minutes.</p>
+                    `
+                })
+
+
+                res.status(200).json({ message: 'OTP sent to your email', email})
+            }
+            else {
+                res.status(401).json({ message: "passwords are not match" })
+            }
+
+        }
+        else {
+            res.status(401).json({ message: 'user not found' })
+        }
+    }
+    catch (err) {
+
+        res.status(500).json({ message: "server error", err })
+    }
+
+}
+
+exports.VerifyOtp = async (req, res) => {
+
+    console.log('verification function', req.body);
+
+    const { email, otp } = req.body
+
+    try {
+
+
+        const existingUser = await user.findOne({ email })
+
+        if(!existingUser){
+
+            return res.status(401).json({ message: 'user not found' })
+        }
+
+
+         //create hash otp
+            const hashedOtp=crypto.createHash("sha256").update(otp.toString()).digest("hex")
+       
+            console.log("Hashed Otp",hashedOtp);
+            console.log("existing Otp",existingUser.otp);
+            
+            if(existingUser.otp !== hashedOtp || new Date(existingUser.otpExpire).getTime() < Date.now()){
+                
+                 return res.status(400).json({ message: "Invalid or expired OTP" });
+
+            }
+
+              existingUser.otp=undefined
+              existingUser.otpExpire=undefined
+              existingUser.isVerified=true
+              await existingUser.save()
+
+               const userData = {
                 userId: existingUser._id,
                 username: existingUser.username,
                 phone: existingUser.phone,
@@ -93,22 +185,11 @@ exports.loginUser = async (req, res) => {
             }
 
 
-            if (passwordMatch) {
-
                 const token = jwt.sign({ useremail: existingUser.email, userid: existingUser._id }, process.env.jwtKey)
                 console.log(token);
 
-
-                res.status(200).json({ message: 'Login successful', existingUser: userData, token })
-            }
-            else {
-                res.status(401).json({ message: "passwords are not match" })
-            }
-
-        }
-        else {
-            res.status(401).json({ message: 'user not found' })
-        }
+               res.status(200).json({ message: 'OTP Verified Succesfully', existingUser: userData, token })
+       
     }
     catch (err) {
 

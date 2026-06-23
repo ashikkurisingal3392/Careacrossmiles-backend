@@ -17,6 +17,8 @@ userRouter.post('/api/register',userController.registerUser)
 
 userRouter.post('/api/login',userController.loginUser)
 
+//OTP verification
+userRouter.post('/api/verify-otp',userController.VerifyOtp)
 //google Login api-endpoint
 
 userRouter.post('/api/googlelogin',userController.googleLoginUser)

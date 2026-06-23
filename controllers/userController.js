@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 
 // const nodemailer = require('nodemailer')
 
-const {Resend} = require('resend')
+const { Resend } = require('resend')
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -327,10 +327,26 @@ exports.sendEmailNotification = async (req, res) => {
             from: 'onboarding@resend.dev',
             to: 'ashikkurisingal@gmail.com',
             subject: 'Family Invitation ',
-            html: '<p>Congrats on sending your <strong>first email</strong>!</p>'
-    })
+            html: `
+<h2>You've been invited!</h2>
 
-      return res.status(200).json({
+<p>You have been invited to join the Antony family group on Care Across Miles.</p>
+
+<a
+ href="https://careacrossmiles.vercel.app/register"
+ style="
+  background:#2c6e49;
+  color:white;
+  padding:12px 20px;
+  text-decoration:none;
+  border-radius:5px;
+ ">
+ Join Now
+</a>
+`
+        })
+
+        return res.status(200).json({
             message: "Invitation sent successfully",
             response
         });

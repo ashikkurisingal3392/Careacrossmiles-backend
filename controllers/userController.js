@@ -97,7 +97,7 @@ exports.loginUser = async (req, res) => {
               
 
                await resend.emails.send({
-                    from:"Care Across Miles <onboarding@resend.dev>",
+                    from:"Care Across Miles <noreply@updates.watchmerise.dev>",
                     to:email,
                     subject:"Your OTP verification code",
                     html:`
